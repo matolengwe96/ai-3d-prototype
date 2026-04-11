@@ -1,5 +1,6 @@
 export const assets = [
   {
+    id: "hard-hat",
     name: "Yellow Hard Hat",
     category: "PPE",
     modelPath: "/models/hard-hat.glb",
