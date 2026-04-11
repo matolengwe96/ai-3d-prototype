@@ -1,15 +1,16 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Center, useGLTF } from "@react-three/drei";
-import { Suspense } from "react";
+import { OrbitControls } from "@react-three/drei";
 
-function Model({ modelPath }) {
-  const { scene } = useGLTF(modelPath);
-  return <primitive object={scene} />;
+function PlaceholderBox() {
+  return (
+    <mesh rotation={[0.4, 0.4, 0]}>
+      <boxGeometry args={[1.5, 1.5, 1.5]} />
+      <meshStandardMaterial />
+    </mesh>
+  );
 }
 
 export default function ModelViewer({ modelPath }) {
-  if (!modelPath) return null;
-
   return (
     <div className="viewer-card">
       <h2>3D Viewer</h2>
@@ -18,16 +19,13 @@ export default function ModelViewer({ modelPath }) {
           <ambientLight intensity={1.2} />
           <directionalLight position={[3, 3, 3]} intensity={1.5} />
           <directionalLight position={[-3, 2, -2]} intensity={1} />
-
-          <Suspense fallback={null}>
-            <Center>
-              <Model modelPath={modelPath} />
-            </Center>
-          </Suspense>
-
+          <PlaceholderBox />
           <OrbitControls />
         </Canvas>
       </div>
+      <p style={{ marginTop: "12px" }}>
+        {modelPath ? `Requested model: ${modelPath}` : "No model selected yet."}
+      </p>
     </div>
   );
 }
