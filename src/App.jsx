@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { matchAsset } from "./utils/matchAsset";
-import { generateSummary } from "./utils/generateSummary";
 import ModelViewer from "./components/ModelViewer";
 import "./styles.css";
 
@@ -8,13 +6,52 @@ function App() {
   const [query, setQuery] = useState("");
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [summary, setSummary] = useState("");
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const matched = matchAsset(query);
-    setSelectedAsset(matched);
-    setSummary(generateSummary(matched));
+    if (!query.trim()) {
+      setSelectedAsset(null);
+      setSummary("Please enter a search query.");
+      setReason("");
+      return;
+    }
+
+    setLoading(true);
+    setSelectedAsset(null);
+    setSummary("");
+    setReason("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/match-asset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Request failed.");
+      }
+
+      setSelectedAsset(data.matchedAsset || null);
+      setSummary(
+        data.educationalSummary || "No educational summary available."
+      );
+      setReason(data.reason || "No AI reasoning returned.");
+    } catch (error) {
+      console.error("AI request failed:", error);
+      setSelectedAsset(null);
+      setSummary("AI matching failed. Please check your backend.");
+      setReason("");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,16 +65,17 @@ function App() {
         <form onSubmit={handleSubmit} className="search-form">
           <input
             type="text"
-            placeholder="Try: hard hat, helmet, hammer..."
+            placeholder="Try: hard hat, helmet, head protection..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button type="submit">Search</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Thinking..." : "Search"}
+          </button>
         </form>
 
         <div className="result-card">
           <h2>Selected Asset</h2>
-
           {selectedAsset ? (
             <>
               <p>
@@ -58,6 +96,11 @@ function App() {
         <div className="summary-card">
           <h2>Educational Summary</h2>
           <p>{summary || "Your summary will appear here after search."}</p>
+        </div>
+
+        <div className="summary-card">
+          <h2>AI Reasoning</h2>
+          <p>{reason || "The AI match explanation will appear here."}</p>
         </div>
 
         <ModelViewer modelPath={selectedAsset?.modelPath} />
