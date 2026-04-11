@@ -1,16 +1,50 @@
-# React + Vite
+# AI 3D Asset Prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is an AI-powered interactive prototype that converts user input into 3D training content.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Text-based object search (e.g. "hard hat")
+- AI-style asset matching
+- Educational summaries
+- Interactive 3D viewer (Three.js)
 
-## React Compiler
+## 🧠 Architecture
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Frontend:
+- React (Vite)
+- Three.js (React Three Fiber)
 
-## Expanding the ESLint configuration
+Pipeline:
+User Input → Matching Logic → Asset Selection → 3D Viewer → Summary
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📦 Project Structure
+
+```
+src/
+  components/
+  data/
+  utils/
+public/
+  models/
+```
+
+## ⚙️ Setup
+
+```bash
+npm install
+npm run dev
+```
+
+## 📌 Current Status
+
+- MVP search and UI working
+- 3D viewer placeholder added
+- Next: integrate real AI + 3D asset pipeline
+
+## 🔮 Future Improvements
+
+- LLM-powered semantic matching
+- Image → 3D asset pipeline
+- External asset APIs (Sketchfab / Objaverse)
+- Real 3D model preprocessing
