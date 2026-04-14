@@ -26,18 +26,57 @@ const assets = [
       "construction helmet",
       "safety helmet",
       "head protection",
-      "protective gear",
-      "safety equipment",
-      "construction safety",
       "ppe",
       "head safety"
+    ]
+  },
+  {
+    id: "safety-vest",
+    name: "Safety Vest",
+    category: "PPE",
+    modelPath: "/models/safety-vest.glb",
+    keywords: [
+      "vest",
+      "safety vest",
+      "high visibility vest",
+      "hi vis",
+      "reflective vest",
+      "body protection",
+      "ppe"
+    ]
+  },
+  {
+    id: "protective-gloves",
+    name: "Protective Gloves",
+    category: "PPE",
+    modelPath: "/models/protective-gloves.glb",
+    keywords: [
+      "gloves",
+      "protective gloves",
+      "hand protection",
+      "work gloves",
+      "safety gloves",
+      "ppe"
+    ]
+  },
+  {
+    id: "fire-extinguisher",
+    name: "Fire Extinguisher",
+    category: "Safety Equipment",
+    modelPath: "/models/fire-extinguisher.glb",
+    keywords: [
+      "fire extinguisher",
+      "extinguisher",
+      "fire safety",
+      "emergency equipment",
+      "fire protection",
+      "safety equipment"
     ]
   }
 ];
 
-// 👇 NEW ROOT ROUTE
 app.get("/", (req, res) => {
-  res.send("AI 3D Backend is running 🚀");
+  res.send("AI 3D Backend is running");
 });
 
 app.get("/api/health", (req, res) => {
@@ -63,7 +102,7 @@ User query:
 Available assets:
 ${JSON.stringify(assets, null, 2)}
 
-Return valid JSON only in this format:
+Return valid JSON only in this exact format:
 {
   "matchedAssetId": "hard-hat",
   "reason": "Explain briefly why this asset is the best match.",

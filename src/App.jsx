@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ModelViewer from "./components/ModelViewer";
+import { assets } from "./data/assets";
 import "./styles.css";
 
 function App() {
@@ -9,10 +10,8 @@ function App() {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!query.trim()) {
+  const searchWithQuery = async (searchText) => {
+    if (!searchText.trim()) {
       setSelectedAsset(null);
       setSummary("Please enter a search query.");
       setReason("");
@@ -30,7 +29,7 @@ function App() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query: searchText })
       });
 
       const data = await response.json();
@@ -54,6 +53,16 @@ function App() {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await searchWithQuery(query);
+  };
+
+  const handleQuickSelect = async (asset) => {
+    setQuery(asset.name);
+    await searchWithQuery(asset.name);
+  };
+
   return (
     <div className="app">
       <div className="panel">
@@ -65,7 +74,7 @@ function App() {
         <form onSubmit={handleSubmit} className="search-form">
           <input
             type="text"
-            placeholder="Try: hard hat, helmet, head protection..."
+            placeholder="Try: helmet, safety vest, gloves, fire extinguisher..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -73,6 +82,22 @@ function App() {
             {loading ? "Thinking..." : "Search"}
           </button>
         </form>
+
+        <div className="chip-row">
+          {assets.map((asset) => (
+            <button
+              key={asset.id}
+              type="button"
+              className={`chip ${
+                selectedAsset?.id === asset.id ? "chip-active" : ""
+              }`}
+              onClick={() => handleQuickSelect(asset)}
+              disabled={loading}
+            >
+              {asset.name}
+            </button>
+          ))}
+        </div>
 
         <div className="result-card">
           <h2>Selected Asset</h2>
