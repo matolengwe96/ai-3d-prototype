@@ -3,6 +3,8 @@ import ModelViewer from "./components/ModelViewer";
 import { assets } from "./data/assets";
 import "./styles.css";
 
+const API_URL = "https://ai-3d-backend-pou6.onrender.com/api/match-asset";
+
 function findBestMatch(query) {
   const q = query.toLowerCase().trim();
   const words = q.split(/\s+/).filter(Boolean);
@@ -93,16 +95,13 @@ function App() {
     setReason("");
 
     try {
-      const response = await fetch(
-        "https://ai-3d-backend-pou6.onrender.com/api/match-asset",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ query: searchText })
-        }
-      );
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: searchText })
+      });
 
       const data = await response.json();
 
