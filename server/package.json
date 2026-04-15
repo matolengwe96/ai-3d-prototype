@@ -1,9 +1,16 @@
 {
-  "name": "server",
+  "name": "ai-3d-backend",
   "version": "1.0.0",
+  "description": "Backend for AI 3D Asset Prototype",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "openai": "^4.104.0"
   }
 }
