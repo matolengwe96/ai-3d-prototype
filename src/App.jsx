@@ -3,6 +3,75 @@ import ModelViewer from "./components/ModelViewer";
 import { assets } from "./data/assets";
 import "./styles.css";
 
+function findBestMatch(query) {
+  const q = query.toLowerCase().trim();
+  const words = q.split(/\s+/).filter(Boolean);
+
+  let bestMatch = null;
+  let bestScore = 0;
+
+  for (const asset of assets) {
+    let score = 0;
+    const assetName = asset.name.toLowerCase();
+    const assetCategory = asset.category.toLowerCase();
+
+    if (assetName.includes(q)) {
+      score += 5;
+    }
+
+    if (assetCategory.includes(q)) {
+      score += 3;
+    }
+
+    for (const keyword of asset.keywords) {
+      const k = keyword.toLowerCase();
+
+      if (k === q) {
+        score += 6;
+      }
+
+      if (k.includes(q) || q.includes(k)) {
+        score += 3;
+      }
+
+      for (const word of words) {
+        if (k.includes(word)) {
+          score += 1;
+        }
+      }
+    }
+
+    for (const word of words) {
+      if (assetName.includes(word)) {
+        score += 1;
+      }
+
+      if (assetCategory.includes(word)) {
+        score += 1;
+      }
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = asset;
+    }
+  }
+
+  return bestScore > 0 ? bestMatch : null;
+}
+
+function buildFallbackReason(asset, query) {
+  return `The asset "${asset.name}" was selected as the best local match for "${query}" based on its name, category, and related safety keywords.`;
+}
+
+function buildFallbackSummary(asset) {
+  if (asset.summary) {
+    return asset.summary;
+  }
+
+  return "This training asset was matched using the local fallback system.";
+}
+
 function App() {
   const [query, setQuery] = useState("");
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -24,13 +93,16 @@ function App() {
     setReason("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/match-asset", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ query: searchText })
-      });
+      const response = await fetch(
+        "https://ai-3d-backend-pou6.onrender.com/api/match-asset",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query: searchText })
+        }
+      );
 
       const data = await response.json();
 
@@ -38,16 +110,38 @@ function App() {
         throw new Error(data.error || "Request failed.");
       }
 
-      setSelectedAsset(data.matchedAsset || null);
+      if (!data || !data.matchedAsset) {
+        throw new Error("No AI result returned.");
+      }
+
+      setSelectedAsset(data.matchedAsset);
       setSummary(
         data.educationalSummary || "No educational summary available."
       );
-      setReason(data.reason || "No AI reasoning returned.");
+      setReason(
+        data.reason || "Matched by AI, but no detailed reasoning was returned."
+      );
     } catch (error) {
-      console.error("AI request failed:", error);
-      setSelectedAsset(null);
-      setSummary("AI matching failed. Please check your backend.");
-      setReason("");
+      console.error("AI request failed, using local fallback:", error);
+
+      const fallback = findBestMatch(searchText);
+
+      if (fallback) {
+        setSelectedAsset(fallback);
+        setSummary(buildFallbackSummary(fallback));
+        setReason(
+          `Matched using local keyword fallback because AI was unavailable. ${buildFallbackReason(
+            fallback,
+            searchText
+          )}`
+        );
+      } else {
+        setSelectedAsset(null);
+        setSummary("No suitable training asset found for this query.");
+        setReason(
+          "Neither AI matching nor local fallback matching found a suitable asset."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -99,6 +193,12 @@ function App() {
           ))}
         </div>
 
+        {loading && (
+          <div className="status-card">
+            <p>🔄 Finding best match...</p>
+          </div>
+        )}
+
         <div className="result-card">
           <h2>Selected Asset</h2>
           {selectedAsset ? (
@@ -126,6 +226,7 @@ function App() {
         <div className="summary-card">
           <h2>AI Reasoning</h2>
           <p>{reason || "The AI match explanation will appear here."}</p>
+          <p className="helper-text">Powered by AI + fallback matching</p>
         </div>
 
         <ModelViewer modelPath={selectedAsset?.modelPath} />
