@@ -161,6 +161,12 @@ h1 {
   line-height: 1.45;
 }
 
+.avatar-note {
+  margin-top: 10px;
+  color: #b45309;
+  font-size: 0.9rem;
+}
+
 .viewer-header {
   display: flex;
   justify-content: space-between;

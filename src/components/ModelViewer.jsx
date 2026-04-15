@@ -258,7 +258,7 @@ export default function ModelViewer({ modelPath }) {
   );
 }
 
-useGLTF.preload("/models/hard-hat.glb");
+useGLTF.preload("/models/hard-hat .glb");
 useGLTF.preload("/models/safety-vest.glb");
 useGLTF.preload("/models/protective-gloves.glb");
 useGLTF.preload("/models/fire-extinguisher.glb");
