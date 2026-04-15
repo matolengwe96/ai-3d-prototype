@@ -26,6 +26,33 @@ body {
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
 }
 
+.prototype-switcher {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.switcher-button {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.switcher-button:hover {
+  background: #f9fafb;
+}
+
+.switcher-button-active {
+  border-color: #111827;
+  background: #111827;
+  color: white;
+}
+
 h1 {
   margin: 0 0 8px 0;
   text-align: center;
@@ -183,6 +210,10 @@ h1 {
   background: linear-gradient(180deg, #f9fafb 0%, #e5e7eb 100%);
 }
 
+.avatar-viewer-container {
+  height: 420px;
+}
+
 .viewer-caption {
   margin-top: 14px;
   margin-bottom: 0;
@@ -239,6 +270,10 @@ h1 {
 
   .viewer-container {
     height: 360px;
+  }
+
+  .avatar-viewer-container {
+    height: 320px;
   }
 
   .viewer-header {
