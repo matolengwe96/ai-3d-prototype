@@ -167,6 +167,65 @@ h1 {
   font-size: 0.9rem;
 }
 
+.avatar-meta {
+  color: #374151;
+  font-size: 0.92rem;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.history-header h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.command-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.command-history-item {
+  display: grid;
+  grid-template-columns: 2fr auto auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: white;
+  font-size: 0.88rem;
+}
+
+.history-input {
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-action {
+  color: #1d4ed8;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.history-confidence {
+  color: #065f46;
+  font-weight: 600;
+}
+
+.history-time {
+  color: #6b7280;
+}
+
 .viewer-header {
   display: flex;
   justify-content: space-between;
@@ -290,5 +349,10 @@ h1 {
   .viewer-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .command-history-item {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
   }
 }
