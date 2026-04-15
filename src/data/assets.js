@@ -1,22 +1,5 @@
 export const assets = [
   {
-    id: "hard-hat",
-    name: "Yellow Hard Hat",
-    category: "PPE",
-    modelPath: "/models/hard-hat.glb",
-    summary:
-      "A yellow hard hat is a type of personal protective equipment (PPE) designed to protect the head from injuries caused by falling objects, impacts, and electrical hazards. It is commonly used in construction and industrial environments to ensure worker safety.",
-    keywords: [
-      "helmet",
-      "hard hat",
-      "construction helmet",
-      "safety helmet",
-      "head protection",
-      "ppe",
-      "head safety"
-    ]
-  },
-  {
     id: "safety-vest",
     name: "Safety Vest",
     category: "PPE",
@@ -63,6 +46,23 @@ export const assets = [
       "emergency equipment",
       "fire protection",
       "safety equipment"
+    ]
+  },
+  {
+    id: "hard-hat",
+    name: "Yellow Hard Hat",
+    category: "PPE",
+    modelPath: "/models/hard-hat.glb",
+    summary:
+      "A yellow hard hat is a type of personal protective equipment (PPE) designed to protect the head from injuries caused by falling objects, impacts, and electrical hazards. It is commonly used in construction and industrial environments to ensure worker safety.",
+    keywords: [
+      "helmet",
+      "hard hat",
+      "construction helmet",
+      "safety helmet",
+      "head protection",
+      "ppe",
+      "head safety"
     ]
   }
 ];
