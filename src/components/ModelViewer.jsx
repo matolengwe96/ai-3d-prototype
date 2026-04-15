@@ -3,7 +3,9 @@ import {
   OrbitControls,
   useGLTF,
   Center,
-  ContactShadows
+  ContactShadows,
+  Html,
+  Bounds
 } from "@react-three/drei";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 
@@ -36,6 +38,17 @@ class ModelErrorBoundary extends React.Component {
   }
 }
 
+function ViewerLoader() {
+  return (
+    <Html center>
+      <div className="viewer-loader">
+        <div className="viewer-spinner" />
+        <span>Loading model...</span>
+      </div>
+    </Html>
+  );
+}
+
 function PlaceholderModel() {
   return (
     <mesh rotation={[0.4, 0.6, 0]}>
@@ -45,33 +58,107 @@ function PlaceholderModel() {
   );
 }
 
-function LoaderFallback() {
-  return <PlaceholderModel />;
+function getModelAdjustments(modelPath) {
+  if (!modelPath) {
+    return {
+      scale: 1.8,
+      rotation: [0, 0, 0],
+      position: [0, 0, 0]
+    };
+  }
+
+  const path = modelPath.toLowerCase();
+
+  if (path.includes("fire-extinguisher")) {
+    return {
+      scale: 1.25,
+      rotation: [0, Math.PI, 0],
+      position: [0, -0.2, 0]
+    };
+  }
+
+  if (path.includes("protective-gloves")) {
+    return {
+      scale: 3.1,
+      rotation: [0, 0.35, 0],
+      position: [0, -0.15, 0]
+    };
+  }
+
+  if (path.includes("safety-vest")) {
+    return {
+      scale: 2.25,
+      rotation: [0, 0, 0],
+      position: [0, -0.45, 0]
+    };
+  }
+
+  if (path.includes("hard-hat")) {
+    return {
+      scale: 2.4,
+      rotation: [0, 0.55, 0],
+      position: [0, -0.1, 0]
+    };
+  }
+
+  return {
+    scale: 2,
+    rotation: [0, 0, 0],
+    position: [0, 0, 0]
+  };
 }
 
 function LoadedModel({ modelPath }) {
   const gltf = useGLTF(modelPath);
   const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
+  const adjustments = useMemo(() => getModelAdjustments(modelPath), [modelPath]);
 
   return (
-    <Center>
-      <primitive object={scene} scale={2} />
-    </Center>
+    <Bounds fit clip observe margin={1.25}>
+      <Center>
+        <group
+          scale={adjustments.scale}
+          rotation={adjustments.rotation}
+          position={adjustments.position}
+        >
+          <primitive object={scene} />
+        </group>
+      </Center>
+    </Bounds>
   );
 }
 
-function ResetCameraController({ resetSignal, controlsRef }) {
+function ResetCameraController({ resetSignal, controlsRef, modelPath }) {
   const { camera } = useThree();
 
   useEffect(() => {
-    camera.position.set(0, 0.6, 4.5);
-    camera.lookAt(0, 0, 0);
+    const path = (modelPath || "").toLowerCase();
+
+    let cameraPosition = [0, 0.6, 4.5];
+    let target = [0, 0, 0];
+
+    if (path.includes("fire-extinguisher")) {
+      cameraPosition = [0, 0.5, 5.2];
+      target = [0, 0.2, 0];
+    } else if (path.includes("protective-gloves")) {
+      cameraPosition = [0, 0.35, 3.8];
+      target = [0, 0, 0];
+    } else if (path.includes("safety-vest")) {
+      cameraPosition = [0, 0.7, 4.2];
+      target = [0, 0.1, 0];
+    } else if (path.includes("hard-hat")) {
+      cameraPosition = [0, 0.45, 3.8];
+      target = [0, 0, 0];
+    }
+
+    camera.position.set(...cameraPosition);
+    camera.lookAt(...target);
 
     if (controlsRef.current) {
-      controlsRef.current.target.set(0, 0, 0);
+      controlsRef.current.target.set(...target);
       controlsRef.current.update();
     }
-  }, [resetSignal, camera, controlsRef]);
+  }, [resetSignal, camera, controlsRef, modelPath]);
 
   return null;
 }
@@ -79,23 +166,25 @@ function ResetCameraController({ resetSignal, controlsRef }) {
 function SceneContents({ modelPath, resetSignal, controlsRef }) {
   return (
     <>
-      <color attach="background" args={["#f3f4f6"]} />
+      <color attach="background" args={["#f8fafc"]} />
 
-      <ambientLight intensity={1} />
-      <hemisphereLight intensity={0.7} groundColor="#d1d5db" />
-      <directionalLight position={[4, 6, 4]} intensity={1.5} />
-      <directionalLight position={[-4, 3, -2]} intensity={0.6} />
+      <ambientLight intensity={1.35} />
+      <hemisphereLight intensity={0.9} groundColor="#d1d5db" />
+      <directionalLight position={[5, 6, 5]} intensity={2.1} />
+      <directionalLight position={[-4, 4, -3]} intensity={1} />
+      <directionalLight position={[0, 3, 6]} intensity={0.75} />
 
       <ResetCameraController
         resetSignal={resetSignal}
         controlsRef={controlsRef}
+        modelPath={modelPath}
       />
 
       <ModelErrorBoundary
         fallback={<PlaceholderModel />}
         resetKey={modelPath || "empty"}
       >
-        <Suspense fallback={<LoaderFallback />}>
+        <Suspense fallback={<ViewerLoader />}>
           {modelPath ? (
             <LoadedModel modelPath={modelPath} />
           ) : (
@@ -105,19 +194,19 @@ function SceneContents({ modelPath, resetSignal, controlsRef }) {
       </ModelErrorBoundary>
 
       <ContactShadows
-        position={[0, -1.4, 0]}
-        opacity={0.3}
-        scale={10}
-        blur={2.2}
-        far={4}
+        position={[0, -1.5, 0]}
+        opacity={0.28}
+        scale={12}
+        blur={2.5}
+        far={5}
       />
 
       <OrbitControls
         ref={controlsRef}
         autoRotate
-        autoRotateSpeed={1}
+        autoRotateSpeed={0.9}
         enablePan={false}
-        minDistance={2.5}
+        minDistance={2.4}
         maxDistance={8}
       />
     </>
